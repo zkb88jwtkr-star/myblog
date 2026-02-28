@@ -1,0 +1,8 @@
+{{- $text := .Inner | strings.TrimSpace -}}
+{{- $text = replaceRE "\\r?\\n" "<br />" $text -}}
+{{- $align := .Get "align" | default "left" -}}
+{{- if eq $align "center" -}}
+<div class="poem poem-center">{{ $text | safeHTML }}</div>
+{{- else -}}
+<div class="poem">{{ $text | safeHTML }}</div>
+{{- end -}}

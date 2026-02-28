@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  umami:
+    image: umami-software/umami:postgresql-latest
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://umami:${POSTGRES_PASSWORD}@postgres:5432/umami
+      DATABASE_TYPE: postgresql
+      APP_SECRET: ${UMAMI_APP_SECRET}
+      BASE_PATH: /umami
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+
+  mongo:
+    image: mongo:6
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: waline
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongo_data:/data/db
+
+  waline:
+    image: lizheming/waline:latest
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      MONGO_URL: mongodb://waline:${MONGO_PASSWORD}@mongo:27017/waline?authSource=admin
+      JWT_SECRET: ${WALINE_JWT_SECRET}
+      SITE_NAME: "My Blog"
+      SITE_URL: "http://your-server"
+    depends_on:
+      - mongo
+    ports:
+      - "8360:8360"
+
+volumes:
+  postgres_data:
+  mongo_data:

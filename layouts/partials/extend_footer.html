@@ -1,0 +1,23 @@
+{{ $mainSections := .Site.Params.mainSections | default (slice "posts") }}
+{{ $isArticle := and .IsPage (in $mainSections .Section) }}
+{{ if $isArticle }}
+  {{ $umami := dict
+      "url" .Site.Params.umami.url
+      "shareId" .Site.Params.umami.shareId
+      "endpoint" (.Site.Params.umami.endpoint | default "stats")
+    }}
+  <script>window.__UMAMI_CONFIG__ = {{ $umami | jsonify }};</script>
+  {{ $pv := resources.Get "js/pv.js" | minify | fingerprint }}
+  <script defer src="{{ $pv.RelPermalink }}" integrity="{{ $pv.Data.Integrity }}" crossorigin="anonymous"></script>
+
+  {{ $waline := dict
+      "serverURL" .Site.Params.waline.serverURL
+      "reaction" (.Site.Params.waline.reaction | default (slice "https://unpkg.com/@waline/emojis@1.1.0/weibo/like.png"))
+      "locale" (.Site.Params.waline.locale | default "zh-CN")
+    }}
+  <script>window.__WALINE_CONFIG__ = {{ $waline | jsonify }};</script>
+  {{ $walineClient := .Site.Params.waline.clientJS | default "https://unpkg.com/@waline/client@v2/dist/waline.js" }}
+  <script defer src="{{ $walineClient }}"></script>
+  {{ $walineScript := resources.Get "js/waline.js" | minify | fingerprint }}
+  <script defer src="{{ $walineScript.RelPermalink }}" integrity="{{ $walineScript.Data.Integrity }}" crossorigin="anonymous"></script>
+{{ end }}

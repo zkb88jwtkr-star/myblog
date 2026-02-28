@@ -1,0 +1,140 @@
+{{ define "main" }}
+{{ $sections := slice "life" "learn" "thoughts" }}
+{{ $sectionNames := dict "life" "生活" "learn" "学习" "thoughts" "随笔" }}
+{{ $pages := where .Site.RegularPages "Section" "in" $sections }}
+{{ $featured := where $pages "Params.featured" true }}
+{{ $pinned := where $pages "Params.pinned" true }}
+{{ $featured = $featured | union $pinned }}
+<main class="home">
+  <section class="home-hero">
+    <div class="hero-grid">
+      <div class="hero-intro">
+        <p class="home-kicker">成长笔记</p>
+        <h1 class="home-title">你好，我是 Boris</h1>
+        <p class="home-subtitle">读研中，记录生活、学习与思考的碎片。希望这里像一本安静的小杂志，慢慢翻阅。</p>
+        <div class="home-actions">
+          <a class="btn-primary" href="#latest">开始阅读</a>
+          <a class="btn-ghost" href="/about/">关于我</a>
+        </div>
+      </div>
+      <aside class="hero-now">
+        <h2>现在</h2>
+        <ul class="now-list">
+          <li>
+            <span class="now-label">最近在做</span>
+            <span class="now-value">整理生活节奏</span>
+          </li>
+          <li>
+            <span class="now-label">最近在读</span>
+            <span class="now-value">一本慢慢看的书</span>
+          </li>
+          <li>
+            <span class="now-label">最近在想</span>
+            <span class="now-value">把学习写成可回看的笔记</span>
+          </li>
+        </ul>
+      </aside>
+    </div>
+  </section>
+
+  <section class="home-sections">
+    <header class="section-head">
+      <h2>栏目</h2>
+      <p>先认识我，再选你想看的内容。</p>
+    </header>
+    <div class="card-grid">
+      {{ range $section := $sections }}
+        {{ $sectionPages := where $pages "Section" $section }}
+        {{ $latest := first 1 $sectionPages.ByDate.Reverse }}
+        <div class="section-card">
+          <a class="card-cover" href="/{{ $section }}/" aria-label="进入{{ index $sectionNames $section }}栏目"></a>
+          <div class="section-card-content">
+            <span class="card-icon card-icon-{{ $section }}" aria-hidden="true"></span>
+            <h3>{{ index $sectionNames $section }}</h3>
+            {{ if eq $section "life" }}
+              <p>记录日常的微小改变、节奏与情绪。</p>
+            {{ else if eq $section "learn" }}
+              <p>把走过的学习路线沉淀成可回看的笔记。</p>
+            {{ else }}
+              <p>灵感来时，留下短小而清晰的思考。</p>
+            {{ end }}
+            {{ with index $latest 0 }}
+              <div class="card-latest">
+                <span class="latest-label">最新一篇</span>
+                <a class="latest-link" href="{{ .RelPermalink }}">
+                  <span class="latest-title">{{ .Title }}</span>
+                  <span class="latest-date">{{ .Date.Format "2006-01-02" }}</span>
+                  <span class="latest-arrow">→</span>
+                </a>
+              </div>
+            {{ else }}
+              <div class="card-latest is-empty">
+                <span class="latest-label">最新一篇</span>
+                <span class="latest-title">暂无文章</span>
+              </div>
+            {{ end }}
+          </div>
+        </div>
+      {{ end }}
+    </div>
+  </section>
+
+  {{ if gt (len $featured) 0 }}
+    <section class="home-featured">
+      <header class="section-head">
+        <h2>置顶</h2>
+        <p>我手动置顶的文章，读起来更有代表性。</p>
+      </header>
+      <div class="featured-grid">
+        {{ range first 2 $featured.ByDate.Reverse }}
+          <article class="featured-card">
+            <div class="featured-meta">
+              <span class="meta-section">{{ index $sectionNames .Section | default .Section }}</span>
+              <span class="meta-date">{{ .Date.Format "2006-01-02" }}</span>
+            </div>
+            <h3 class="featured-title">
+              <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+            </h3>
+            <p class="featured-summary">{{ .Summary | plainify | truncate 140 }}</p>
+          </article>
+        {{ end }}
+      </div>
+    </section>
+  {{ end }}
+
+  <section id="latest" class="home-latest">
+    <header class="section-head">
+      <h2>最新文章</h2>
+      <p>最近更新的 6 篇文章，跨栏目展示。</p>
+    </header>
+    <div class="latest-grid">
+      {{ range first 6 $pages.ByDate.Reverse }}
+        <article class="latest-card">
+          <div class="latest-meta">
+            <span class="meta-section">{{ index $sectionNames .Section | default .Section }}</span>
+            <span class="meta-date">{{ .Date.Format "2006-01-02" }}</span>
+          </div>
+          <h3 class="latest-title">
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+          </h3>
+          <p class="latest-summary">{{ .Summary | plainify | truncate 120 }}</p>
+        </article>
+      {{ end }}
+      {{ if not (len $pages) }}
+        <p class="latest-empty">暂无内容，先去写第一篇吧。</p>
+      {{ end }}
+    </div>
+    <div class="latest-footer">
+      <a class="btn-ghost latest-more" href="/archives/">更多文章 →</a>
+    </div>
+  </section>
+
+  <section class="home-subscribe">
+    <div class="subscribe-card">
+      <h2>订阅 / 关注</h2>
+      <p>收藏本站，或者通过 RSS 获取更新。</p>
+      <a class="btn-ghost" href="/index.xml">RSS 订阅</a>
+    </div>
+  </section>
+</main>
+{{ end }}

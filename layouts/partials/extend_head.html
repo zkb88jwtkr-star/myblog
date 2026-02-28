@@ -1,0 +1,13 @@
+{{ $style := resources.Get "css/z-custom.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}" crossorigin="anonymous">
+{{ $mainSections := .Site.Params.mainSections | default (slice "posts") }}
+{{ $isArticle := and .IsPage (in $mainSections .Section) }}
+{{ $umami := .Site.Params.umami }}
+{{ if and $umami.url $umami.websiteId }}
+<script async src="{{ $umami.url }}/script.js" data-website-id="{{ $umami.websiteId }}"{{ with $umami.domains }} data-domains="{{ . }}"{{ end }}></script>
+{{ end }}
+{{ $waline := .Site.Params.waline }}
+{{ if and $isArticle $waline.serverURL }}
+  {{ $walineCSS := $waline.clientCSS | default "https://unpkg.com/@waline/client@v2/dist/waline.css" }}
+<link rel="stylesheet" href="{{ $walineCSS }}">
+{{ end }}

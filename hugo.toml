@@ -1,0 +1,61 @@
+baseURL = "http://8.147.57.78/"
+languageCode = "zh-cn"
+title = "Boris的博客"
+theme = "PaperMod"
+
+[params]
+  author = "Boris"
+  mainSections = ["life", "learn", "thoughts"]
+  ShowReadingTime = true
+  ShowShareButtons = true
+  ShowCodeCopyButtons = true
+
+  [params.umami]
+    url = "https://your-server/umami"
+    websiteId = "YOUR_UMAMI_WEBSITE_ID"
+    shareId = "YOUR_UMAMI_SHARE_ID"
+    endpoint = "stats"
+    domains = ""
+
+  [params.waline]
+    serverURL = "https://your-server/waline"
+    clientJS = "https://unpkg.com/@waline/client@v2/dist/waline.js"
+    clientCSS = "https://unpkg.com/@waline/client@v2/dist/waline.css"
+    reaction = ["https://unpkg.com/@waline/emojis@1.1.0/weibo/like.png"]
+    locale = "zh-CN"
+
+[menu]
+  [[menu.main]]
+    name = "主页"
+    url = "/"
+    weight = 10
+
+  [[menu.main]]
+    name = "生活"
+    url = "/life/"
+    weight = 20
+
+  [[menu.main]]
+    name = "学习"
+    url = "/learn/"
+    weight = 30
+
+  [[menu.main]]
+    name = "随笔"
+    url = "/thoughts/"
+    weight = 40
+
+  [[menu.main]]
+    name = "归档"
+    url = "/archives/"
+    weight = 50
+
+  [[menu.main]]
+    name = "标签"
+    url = "/tags/"
+    weight = 60
+
+  [[menu.main]]
+    name = "关于"
+    url = "/about/"
+    weight = 70
